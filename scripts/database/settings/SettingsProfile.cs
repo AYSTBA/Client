@@ -93,6 +93,18 @@ public partial class SettingsProfile
     [Order]
     public SettingsItem<double> FoV { get; private set; }
 
+    /// <summary>
+    /// How fast the cursor travels when driven by a gamepad stick
+    /// </summary>
+    [Order]
+    public SettingsItem<double> GamepadCursorSpeed { get; private set; }
+
+    /// <summary>
+    /// Stick displacement that is ignored before the cursor starts moving
+    /// </summary>
+    [Order]
+    public SettingsItem<double> GamepadDeadzone { get; private set; }
+
     #endregion
 
     #region Visual
@@ -381,6 +393,12 @@ public partial class SettingsProfile
 
     [Order]
     /// <summary>
+    /// Language used by the interface
+    /// </summary>
+    public SettingsItem<string> Language { get; private set; }
+
+    [Order]
+    /// <summary>
     /// Sets a custom user folder
     /// <summary>
     public SettingsItem<string> SetUserFolderPath { get; private set; }
@@ -615,6 +633,34 @@ public partial class SettingsProfile
                 Step = 1,
                 MinValue = 60,
                 MaxValue = 120,
+            },
+        };
+
+        GamepadCursorSpeed = new(PlayerInputController.DefaultGamepadCursorSpeed)
+        {
+            Id = "GamepadCursorSpeed",
+            Title = "Gamepad Cursor Speed",
+            Description = "How fast the cursor moves when a gamepad stick is pushed, in pixels per second",
+            Section = SettingsSection.Gameplay,
+            Slider = new()
+            {
+                Step = 10,
+                MinValue = 100,
+                MaxValue = 3000,
+            },
+        };
+
+        GamepadDeadzone = new(PlayerInputController.DefaultGamepadDeadzone)
+        {
+            Id = "GamepadDeadzone",
+            Title = "Gamepad Deadzone",
+            Description = "How far a gamepad stick must be pushed before the cursor starts moving",
+            Section = SettingsSection.Gameplay,
+            Slider = new()
+            {
+                Step = 0.01f,
+                MinValue = 0f,
+                MaxValue = 0.5f,
             },
         };
 
@@ -1269,6 +1315,22 @@ public partial class SettingsProfile
 
         #region Other
 
+        Language = new("System")
+        {
+            Id = "Language",
+            Title = "Language",
+            Description = "Language used by the interface, \"System\" follows your operating system",
+            Section = SettingsSection.Other,
+            UpdateAction = (_, init) =>
+            {
+                if (!init)
+                {
+                    SettingsManager.ShowRestartRequiredPopup();
+                }
+            },
+            List = new("System") { Values = ["System", "English", "简体中文"] },
+        };
+
         ImportNightlyProfile = new(default)
         {
             Id = "ImportNightlyProfile",
@@ -1665,7 +1727,7 @@ public partial class SettingsProfile
         SettingsManager.Load();
         SettingsMenu.Instance.UpdateProfileSelection();
 
-        ToastNotification.Notify($"Created profile '{profileName}'");
+        ToastNotification.Notify(L10n.Tr("Created profile '{0}'", profileName));
     }
 
     public static void ConfigureSetUserFolderPath(string userFolderPath)
@@ -1699,7 +1761,7 @@ public partial class SettingsProfile
             }
         }
 
-        ToastNotification.Notify($"Imported {importedCount} colorsets from nightly");
+        ToastNotification.Notify(L10n.Tr("Imported {0} colorsets from nightly", importedCount));
     }
 
     private static void importMeshesFromNightly()
@@ -1735,6 +1797,6 @@ public partial class SettingsProfile
             }
         }
 
-        ToastNotification.Notify($"Imported {importedCount} meshes from nightly");
+        ToastNotification.Notify(L10n.Tr("Imported {0} meshes from nightly", importedCount));
     }
 }

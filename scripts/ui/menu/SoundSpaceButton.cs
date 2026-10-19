@@ -15,11 +15,11 @@ public partial class SoundSpaceButton : Button
 
     public void OnMouseEntered()
     {
-        label.Text = "[center][color=ffffff40]Inspired by [color=ffffffff]Sound Space";
+        label.Text = L10n.Tr("[center][color=ffffff40]Inspired by [color=ffffffff]Sound Space");
     }
 
     public void OnMouseExited()
     {
-        label.Text = "[center][color=ffffff40]Inspired by Sound Space";
+        label.Text = L10n.Tr("[center][color=ffffff40]Inspired by Sound Space");
     }
 }

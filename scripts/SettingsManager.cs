@@ -56,7 +56,7 @@ public partial class SettingsManager : Node
         {
             SettingsProfileConverter.Deserialize($"{Constants.USER_FOLDER}/profiles/{profile}.json", Instance.Settings);
 
-            ToastNotification.Notify($"Loaded profile [{profile}]");
+            ToastNotification.Notify(L10n.Tr("Loaded profile [{0}]", profile));
         }
         catch (Exception exception)
         {
@@ -67,7 +67,10 @@ public partial class SettingsManager : Node
         if (!Directory.Exists($"{Constants.USER_FOLDER}/skins/{Instance.Settings.Skin.Value}"))
         {
             Instance.Settings.Skin.Value = new("default");
-            ToastNotification.Notify($"Could not find skin {Instance.Settings.Skin.Value}", 1);
+            ToastNotification.Notify(
+                L10n.Tr("Could not find skin {0}", Instance.Settings.Skin.Value),
+                1
+            );
         }
 
         static void addUserContentToSettingsList(SettingsItem<string> settingsItem, IEnumerable<string> options)
@@ -87,6 +90,8 @@ public partial class SettingsManager : Node
         addUserContentToSettingsList(Instance.Settings.NoteColors, Directory.GetFiles($"{Constants.USER_FOLDER}/colorsets"));
 
         Logger.Log($"Loaded settings {profile}");
+
+        LocalizationManager.Apply();
 
         Instance.EmitSignal(SignalName.Loaded);
 
@@ -256,6 +261,20 @@ public partial class SettingsManager : Node
         HideNotifications = false;
 
         ToastNotification.Notify("Settings reset to default successfully!");
+    }
+
+    /// <summary>
+    /// Asks the player to restart so a settings change that cannot be applied at runtime
+    /// (such as the interface language) takes effect.
+    /// </summary>
+    public static void ShowRestartRequiredPopup()
+    {
+        var popup = new OptionPopup("Restart required.", "This change only takes effect after a restart. Restart now?");
+
+        popup.AddOption("Restart", Callable.From(restartGame));
+        popup.AddOption("Cancel", Callable.From(popup.Hide));
+
+        popup.Show();
     }
 
     private static void restartGame()

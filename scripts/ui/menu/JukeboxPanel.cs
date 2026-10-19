@@ -117,7 +117,7 @@ public partial class JukeboxPanel : Panel, ISkinnable
 
     public void ShowMenuTheme()
     {
-        title.Text = "Menu Theme";
+        title.Text = L10n.Tr("Menu Theme");
         Map = null;
         selectButton.Disabled = true;
     }

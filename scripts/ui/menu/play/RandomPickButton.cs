@@ -26,6 +26,15 @@ public partial class RandomPickButton : Button
     public void Pick()
     {
         var mapList = MapList.Instance;
+
+        // Random.Next(0) returns 0 rather than throwing, so an empty list would otherwise
+        // fault on Maps[0].
+        if (mapList == null || mapList.Maps.Count == 0)
+        {
+            _ = ToastNotification.Notify(L10n.Tr("There are no maps to pick from"), 1);
+            return;
+        }
+
         int index = random.Next(mapList.Maps.Count);
 
         mapList.Select(mapList.Maps[index], false);

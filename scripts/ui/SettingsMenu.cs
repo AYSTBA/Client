@@ -123,7 +123,7 @@ public partial class SettingsMenu : ColorRect
 
             sidebarCategory.Name = sectionName;
             sidebarCategory.Visible = true;
-            sidebarButton.Text = sectionName.ToUpper();
+            sidebarButton.Text = L10n.Tr(sectionName).ToUpper();
             sidebarButton.Pressed += () =>
             {
                 SelectCategory(category);
@@ -150,8 +150,8 @@ public partial class SettingsMenu : ColorRect
                 panel.Visible = true;
 
                 Label title = panel.GetNode<Label>("Title");
-                title.Text = setting.Title;
-                title.TooltipText = setting.Description;
+                title.Text = L10n.Tr(setting.Title);
+                title.TooltipText = L10n.Tr(setting.Description);
 
                 if (setting.Type == typeof(bool))
                 {
@@ -453,7 +453,7 @@ public partial class SettingsMenu : ColorRect
     {
         foreach (Variant item in setting.List.Values)
         {
-            optionButton.AddItem((string)item);
+            optionButton.AddItem(L10n.Tr((string)item));
         }
 
         optionButton.ItemSelected += (id) =>
@@ -500,8 +500,8 @@ public partial class SettingsMenu : ColorRect
     private static void setupButton(SettingsButton setting, Button button)
     {
         button.Visible = true;
-        button.Text = setting.Title;
-        button.TooltipText = setting.Description;
+        button.Text = L10n.Tr(setting.Title);
+        button.TooltipText = L10n.Tr(setting.Description);
         button.Visible = true;
 
         ulong lastPressedAt = 0;
@@ -525,7 +525,7 @@ public partial class SettingsMenu : ColorRect
 
         foreach (Variant item in setting.List.Values)
         {
-            optionButton.AddItem(item.AsString());
+            optionButton.AddItem(L10n.Tr(item.AsString()));
         }
     }
 }

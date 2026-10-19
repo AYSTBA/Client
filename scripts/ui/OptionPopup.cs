@@ -48,8 +48,8 @@ public partial class OptionPopup : Control
     {
         Node container = GetNode("Holder").GetNode("VBoxContainer");
 
-        headerLabel.Text = Header;
-        infoLabel.Text = Info;
+        headerLabel.Text = L10n.Tr(Header);
+        infoLabel.Text = L10n.Tr(Info);
 
         GetNode<Button>("Hide").Pressed += Hide;
 
@@ -75,8 +75,8 @@ public partial class OptionPopup : Control
     {
         Button button = buttonTemplate.Duplicate() as Button;
 
-        button.Text = text;
-        button.TooltipText = tooltip;
+        button.Text = L10n.Tr(text);
+        button.TooltipText = L10n.Tr(tooltip);
         button.Visible = true;
         button.Pressed += () =>
         {
@@ -121,13 +121,13 @@ public partial class OptionPopup : Control
     public void UpdateHeader(string header)
     {
         Header = header;
-        headerLabel.Text = header;
+        headerLabel.Text = L10n.Tr(header);
     }
 
     public void UpdateInfo(string info)
     {
         Info = info;
-        infoLabel.Text = info;
+        infoLabel.Text = L10n.Tr(info);
     }
 
     [GeneratedRegex("[^a-zA-Z0-9_-]")]

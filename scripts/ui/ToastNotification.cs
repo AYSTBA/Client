@@ -29,6 +29,9 @@ public partial class ToastNotification : Node
             return;
         }
 
+        // Every toast goes through here, so the translation lives in one place.
+        message = L10n.Tr(message);
+
         PanelContainer notification = template.Instantiate<PanelContainer>();
         SceneManager.Scene.AddChild(notification);
         Color color = new();
@@ -142,6 +145,12 @@ public partial class ToastNotification : Node
 
     private static string calculateMultilineWrap(float maxWidth, string text, Font font, int fontSize)
     {
+        // CJK text has no spaces to break on, so it is wrapped per character instead.
+        if (containsWideCharacters(text))
+        {
+            return wrapByCharacter(maxWidth, text, font, fontSize);
+        }
+
         string[] words = text.Split(" ");
         List<string> normalizedWords = [];
 
@@ -151,7 +160,7 @@ public partial class ToastNotification : Node
         {
             float wordWidth = font.GetStringSize(words[i], HorizontalAlignment.Left, -1, fontSize).X;
 
-            if ((lineWidth + wordWidth) > maxWidth)
+            if ((lineWidth + wordWidth) > maxWidth && normalizedWords.Count > 0)
             {
                 normalizedWords[^1] = "\n";
                 lineWidth = 0f;
@@ -163,5 +172,55 @@ public partial class ToastNotification : Node
         }
 
         return string.Join("", normalizedWords);
+    }
+
+    private static string wrapByCharacter(float maxWidth, string text, Font font, int fontSize)
+    {
+        var result = new System.Text.StringBuilder(text.Length + 8);
+
+        float lineWidth = 0f;
+
+        foreach (char c in text)
+        {
+            if (c == '\n')
+            {
+                result.Append('\n');
+                lineWidth = 0f;
+                continue;
+            }
+
+            float width = font.GetStringSize(c.ToString(), HorizontalAlignment.Left, -1, fontSize).X;
+
+            if (lineWidth + width > maxWidth && lineWidth > 0f)
+            {
+                result.Append('\n');
+                lineWidth = 0f;
+            }
+
+            result.Append(c);
+            lineWidth += width;
+        }
+
+        return result.ToString();
+    }
+
+    /// <summary>True when the text contains CJK ideographs or full-width punctuation.</summary>
+    private static bool containsWideCharacters(string text)
+    {
+        foreach (char c in text)
+        {
+            if (
+                (c >= 0x3000 && c <= 0x303F)   // CJK punctuation
+                || (c >= 0x3400 && c <= 0x4DBF) // CJK extension A
+                || (c >= 0x4E00 && c <= 0x9FFF) // CJK unified ideographs
+                || (c >= 0xF900 && c <= 0xFAFF) // CJK compatibility ideographs
+                || (c >= 0xFF00 && c <= 0xFFEF) // full-width forms
+            )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

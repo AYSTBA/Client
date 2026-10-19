@@ -112,6 +112,29 @@ public partial class MainMenu : BaseScene
         {
             SoundManager.PlayJukebox(SoundManager.JukeboxIndex);
         }
+
+        notifyIfNoMaps();
+    }
+
+    private static bool emptyMapsNotified = false;
+
+    /// <summary>
+    /// An empty map list silently does nothing when clicked, which reads as a broken menu.
+    /// Tell the player once that maps have to be imported first.
+    /// </summary>
+    private static void notifyIfNoMaps()
+    {
+        if (emptyMapsNotified || MapList.Instance == null || MapList.Instance.Maps.Count > 0)
+        {
+            return;
+        }
+
+        emptyMapsNotified = true;
+
+        _ = ToastNotification.Notify(
+            L10n.Tr("No maps found yet. Click \"Import\" or drop map files into your maps folder."),
+            1
+        );
     }
 
     public override void _Process(double delta)

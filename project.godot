@@ -31,6 +31,7 @@ buses/default_bus_layout="uid://byxtiup0hs2og"
 
 [autoload]
 
+LocalizationManager="*res://scripts/localization/LocalizationManager.cs"
 Constants="*res://scripts/Constants.cs"
 FileInitializer="*uid://dp48xgqpesoue"
 DatabaseService="*uid://c4t8bmpg1wmnv"

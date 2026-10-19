@@ -16,7 +16,7 @@ public partial class Skip : UIComponent
     public override void Init()
     {
         label = GetNode<Label3D>("Label");
-        label.Text = "Press Space to skip";
+        label.Text = L10n.Tr("Press Space to skip");
         Runner.SkipAvailable += OnSkipAvailable;
     }
 
@@ -34,7 +34,7 @@ public partial class Skip : UIComponent
     {
         if (Runner.ObjectIndicesStart[typeof(Note)] >= attempt.Map.Notes.Length)
         {
-            label.Text = "Press Space to complete";
+            label.Text = L10n.Tr("Press Space to complete");
         }
 
         if (tween != null)

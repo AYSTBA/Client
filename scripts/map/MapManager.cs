@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -118,7 +118,7 @@ public partial class MapManager : Node
             Callable
                 .From(() =>
                 {
-                    _ = ToastNotification.Notify($"Deleted {map.PrettyTitle}!");
+                    _ = ToastNotification.Notify(L10n.Tr("Deleted {0}!", map.PrettyTitle));
                 })
                 .CallDeferred();
             Callable.From(() => MapDeleted?.Invoke(map)).CallDeferred();

@@ -35,7 +35,7 @@ public partial class MapParser : Node
             return;
 
         if (notify)
-            _ = ToastNotification.Notify($"Importing {files.Length} map(s)");
+            _ = ToastNotification.Notify(L10n.Tr("Importing {0} map(s)", files.Length));
 
         await Task.Run(() =>
         {
@@ -77,7 +77,7 @@ public partial class MapParser : Node
 
         SoundManager.UpdateJukeboxQueue();
         if (notify)
-            _ = ToastNotification.Notify($"Finished importing {files.Length} map(s)");
+            _ = ToastNotification.Notify(L10n.Tr("Finished importing {0} map(s)", files.Length));
     }
 
     public static void ExportEncode(Map map)
@@ -747,7 +747,10 @@ public partial class MapParser : Node
         }
         catch (Exception exception)
         {
-            _ = ToastNotification.Notify($"{Path.GetFileNameWithoutExtension(path)} is not the proper format!", 2);
+            _ = ToastNotification.Notify(
+                L10n.Tr("{0} is not the proper format!", Path.GetFileNameWithoutExtension(path)),
+                2
+            );
             Logger.Error(exception);
             throw;
         }

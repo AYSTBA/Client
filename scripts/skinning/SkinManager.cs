@@ -172,7 +172,7 @@ public partial class SkinManager : Node
 
         if (!SettingsManager.HideNotifications)
         {
-            ToastNotification.Notify($"Loaded skin [{settings.Skin.Value}]");
+            ToastNotification.Notify(L10n.Tr("Loaded skin [{0}]", settings.Skin.Value));
         }
 
         Logger.Log($"Loaded skin {settings.Skin.Value}");

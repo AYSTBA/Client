@@ -9,7 +9,10 @@ public partial class KeybindsManager : Node
 
     public override void _Ready()
     {
-        wikiPopup = new("Open Wiki", string.Format(CultureInfo.CurrentCulture, LinkPopupButton.InfoTemplate, wikiLink));
+        wikiPopup = new(
+            "Open Wiki",
+            string.Format(CultureInfo.CurrentCulture, L10n.Tr(LinkPopupButton.InfoTemplate), wikiLink)
+        );
 
         wikiPopup.AddOption(
             "Open",

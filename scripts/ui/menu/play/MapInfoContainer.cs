@@ -129,10 +129,10 @@ public partial class MapInfoContainer : Panel, ISkinnable
             string exportPath = $"{Constants.USER_FOLDER}/export/";
             string exportFilePath = Path.Combine(exportPath, $"{Map.Name}.phxm");
 
-            _ = ToastNotification.Notify($"Exporting to {exportFilePath}", 1);
+            _ = ToastNotification.Notify(L10n.Tr("Exporting to {0}", exportFilePath), 1);
             MapParser.ExportEncode(Map);
 
-            _ = ToastNotification.Notify($"Done! Opening export...", 0);
+            _ = ToastNotification.Notify(L10n.Tr("Done! Opening export..."), 0);
 
             OS.ShellShowInFileManager(exportFilePath);
         };

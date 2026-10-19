@@ -114,13 +114,13 @@ public partial class Loading : BaseScene
     {
         enter();
 
-        progressLabel.Text = $"Downloading {Releases.MANAGER.DownloadedPercentage} %";
+        progressLabel.Text = L10n.Tr("Downloading {0} %", Releases.MANAGER.DownloadedPercentage);
 
         Releases.MANAGER.PropertyChanged += updateDownloadBar;
         Releases.MANAGER.DownloadCompleted += (_, _) =>
         {
             Releases.MANAGER.PropertyChanged -= updateDownloadBar;
-            progressLabel.Text = "Installing";
+            progressLabel.Text = L10n.Tr("Installing");
         };
         Releases.UpdateToLatest();
     }
@@ -132,7 +132,7 @@ public partial class Loading : BaseScene
 
         if (allSynced)
         {
-            progressLabel.Text = "Done!";
+            progressLabel.Text = L10n.Tr("Done!");
             progressBarFill.AnchorRight = 1;
         }
         else
@@ -147,13 +147,13 @@ public partial class Loading : BaseScene
                 int synced = MapCache.FilesSynced.Value;
                 float progress = synced / (float)toSync;
 
-                progressLabel.Text = $"Initializing maps ({synced}/{toSync})";
+                progressLabel.Text = L10n.Tr("Initializing maps ({0}/{1})", synced, toSync);
                 progressBarFill.AnchorRight = progress;
 
                 if (progress >= 1)
                 {
                     allSynced = true;
-                    progressLabel.Text = "Done!";
+                    progressLabel.Text = L10n.Tr("Done!");
                 }
             };
         }
@@ -181,7 +181,7 @@ public partial class Loading : BaseScene
     {
         if (@event.PropertyName == nameof(UpdatumManager.DownloadedPercentage))
         {
-            CallDeferred("UpdateProgressLabel", $"Downloading {Releases.MANAGER.DownloadedPercentage} %");
+            CallDeferred("UpdateProgressLabel", L10n.Tr("Downloading {0} %", Releases.MANAGER.DownloadedPercentage));
             float progress = (float)Releases.MANAGER.DownloadedPercentage / 100;
             CallDeferred("UpdateProgressBar", progress);
         }
