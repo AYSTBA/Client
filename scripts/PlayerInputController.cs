@@ -7,10 +7,10 @@ public partial class PlayerInputController : Node
     // So these bindings are hardcoded (for now) -thom
 
     /// <summary>Cursor travel in pixels per second at full stick deflection.</summary>
-    public const double DefaultGamepadCursorSpeed = 700.0;
+    public const double DEFAULT_GAMEPAD_CURSOR_SPEED = 700.0;
 
     /// <summary>Stick displacement ignored before any movement happens.</summary>
-    public const double DefaultGamepadDeadzone = 0.15;
+    public const double DEFAULT_GAMEPAD_DEADZONE = 0.15;
 
     /// <summary>
     /// Fired when the mouse moves.
@@ -111,16 +111,10 @@ public partial class PlayerInputController : Node
         if (speed <= 0)
             return;
 
-        var stick = new Vector2(
-            Input.GetJoyAxis(device, JoyAxis.LeftX),
-            Input.GetJoyAxis(device, JoyAxis.LeftY)
-        );
+        var stick = new Vector2(Input.GetJoyAxis(device, JoyAxis.LeftX), Input.GetJoyAxis(device, JoyAxis.LeftY));
 
         // Some players prefer the right stick; use whichever one is pushed harder.
-        var rightStick = new Vector2(
-            Input.GetJoyAxis(device, JoyAxis.RightX),
-            Input.GetJoyAxis(device, JoyAxis.RightY)
-        );
+        var rightStick = new Vector2(Input.GetJoyAxis(device, JoyAxis.RightX), Input.GetJoyAxis(device, JoyAxis.RightY));
 
         if (rightStick.LengthSquared() > stick.LengthSquared())
         {
@@ -243,11 +237,11 @@ public partial class PlayerInputController : Node
 
         if (settings == null)
         {
-            return (DefaultGamepadCursorSpeed, DefaultGamepadDeadzone);
+            return (DEFAULT_GAMEPAD_CURSOR_SPEED, DEFAULT_GAMEPAD_DEADZONE);
         }
 
-        double speed = settings.GamepadCursorSpeed?.Value ?? DefaultGamepadCursorSpeed;
-        double deadzone = settings.GamepadDeadzone?.Value ?? DefaultGamepadDeadzone;
+        double speed = settings.GamepadCursorSpeed?.Value ?? DEFAULT_GAMEPAD_CURSOR_SPEED;
+        double deadzone = settings.GamepadDeadzone?.Value ?? DEFAULT_GAMEPAD_DEADZONE;
 
         return (speed, deadzone);
     }

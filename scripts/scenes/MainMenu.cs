@@ -133,10 +133,7 @@ public partial class MainMenu : BaseScene
 
         emptyMapsNotified = true;
 
-        _ = ToastNotification.Notify(
-            L10n.Tr("No maps found yet. Click \"Import\" or drop map files into your maps folder."),
-            1
-        );
+        _ = ToastNotification.Notify(L10n.Tr("No maps found yet. Click \"Import\" or drop map files into your maps folder."), 1);
     }
 
     public override void _Process(double delta)

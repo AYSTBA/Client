@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using Godot;
 
@@ -17,19 +18,19 @@ using Godot;
 /// </summary>
 public static class L10n
 {
-    public const string EnglishLocale = "en";
-    public const string FallbackLocale = "en";
-    public const string TablePath = "res://translations/strings.csv";
-    public const string TableDirectory = "res://translations";
-    public const string TableBaseName = "strings";
+    public const string ENGLISH_LOCALE = "en";
+    public const string FALLBACK_LOCALE = "en";
+    public const string TABLE_PATH = "res://translations/strings.csv";
+    public const string TABLE_DIRECTORY = "res://translations";
+    public const string TABLE_BASE_NAME = "strings";
 
     /// <summary>Locales that ship with a translation table.</summary>
-    public static readonly string[] TranslatedLocales = ["zh_CN"];
+    public static readonly string[] TRANSLATED_LOCALES = ["zh_CN"];
 
     private static readonly Dictionary<string, Translation> tables = new(StringComparer.Ordinal);
 
     /// <summary>Fonts actually referenced by the UI, patched with a CJK fallback at runtime.</summary>
-    private static readonly string[] UiFontPaths =
+    private static readonly string[] ui_font_paths =
     [
         "res://fonts/Roboto/Roboto-Medium.ttf",
         "res://fonts/Roboto/Roboto-Bold.ttf",
@@ -44,16 +45,13 @@ public static class L10n
     private static Font cjkFallbackFont;
 
     /// <summary>The locale the game is currently running in.</summary>
-    public static string Locale { get; private set; } = FallbackLocale;
+    public static string Locale { get; private set; } = FALLBACK_LOCALE;
 
     /// <summary>True once the translation table has been read and registered.</summary>
     public static bool Loaded => tables.Count > 0;
 
     /// <summary>True when the active locale is Chinese, used to gate the translator credit.</summary>
     public static bool IsChinese => Locale.StartsWith("zh", StringComparison.OrdinalIgnoreCase);
-
-    /// <summary>Raised after <see cref="SetLocale"/> changed the active locale.</summary>
-    public static event Action<string> LocaleChanged;
 
     /// <summary>Translates <paramref name="text"/>, returning it untouched when no entry exists.</summary>
     public static string Tr(string text)
@@ -73,7 +71,7 @@ public static class L10n
     }
 
     /// <summary>
-    /// Translates a format string and applies <see cref="string.Format(string, object[])"/>.
+    /// Translates a format string and applies <see cref="string.Format(IFormatProvider, string, object[])"/>.
     /// Keys use numbered placeholders, for example <c>"Initializing maps ({0}/{1})"</c>.
     /// </summary>
     public static string Tr(string text, params object[] args)
@@ -85,14 +83,15 @@ public static class L10n
             return translated;
         }
 
+        // Invariant culture keeps numbers identical regardless of the player's system locale.
         try
         {
-            return string.Format(translated, args);
+            return string.Format(CultureInfo.InvariantCulture, translated, args);
         }
         catch (FormatException)
         {
             // A malformed translation must never break the UI: fall back to the English source.
-            return string.Format(text, args);
+            return string.Format(CultureInfo.InvariantCulture, text, args);
         }
     }
 
@@ -133,9 +132,7 @@ public static class L10n
 
         string loaded = entries >= 0 ? $"{entries} entries" : "table";
 
-        Logger.Log(
-            $"L10N: loaded {loaded} from {source} for [{string.Join(", ", tables.Keys)}]"
-        );
+        Logger.Log($"L10N: loaded {loaded} from {source} for [{string.Join(", ", tables.Keys)}]");
 
         if (tables.Count == 0)
         {
@@ -148,9 +145,9 @@ public static class L10n
     {
         int entries = 0;
 
-        foreach (string locale in TranslatedLocales)
+        foreach (string locale in TRANSLATED_LOCALES)
         {
-            string path = $"{TableDirectory}/{TableBaseName}.{locale}.translation";
+            string path = $"{TABLE_DIRECTORY}/{TABLE_BASE_NAME}.{locale}.translation";
 
             if (!ResourceLoader.Exists(path))
             {
@@ -185,22 +182,22 @@ public static class L10n
     /// <summary>Parses the authored CSV, used when no imported translation is available.</summary>
     private static int loadCsv()
     {
-        if (!FileAccess.FileExists(TablePath))
+        if (!FileAccess.FileExists(TABLE_PATH))
         {
             // Expected in exported builds, where only the imported resource is packed.
-            Logger.Log($"L10N: no CSV at {TablePath}, falling back to imported translations");
+            Logger.Log($"L10N: no CSV at {TABLE_PATH}, falling back to imported translations");
             return 0;
         }
 
-        using FileAccess file = FileAccess.Open(TablePath, FileAccess.ModeFlags.Read);
+        using FileAccess file = FileAccess.Open(TABLE_PATH, FileAccess.ModeFlags.Read);
 
         if (file == null)
         {
-            GD.PushError($"L10n: could not open {TablePath} ({FileAccess.GetOpenError()})");
+            GD.PushError($"L10n: could not open {TABLE_PATH} ({FileAccess.GetOpenError()})");
             return 0;
         }
 
-        List<List<string>> rows = ParseCsv(file.GetAsText());
+        List<List<string>> rows = parseCsv(file.GetAsText());
 
         if (rows.Count < 2)
         {
@@ -240,12 +237,12 @@ public static class L10n
                 string value = row[column];
 
                 // English is the source language, so it never needs an entry.
-                if (locale.Length == 0 || locale == EnglishLocale || string.IsNullOrEmpty(value))
+                if (locale.Length == 0 || locale == ENGLISH_LOCALE || string.IsNullOrEmpty(value))
                 {
                     continue;
                 }
 
-                GetOrCreateTable(locale).AddMessage(key, value);
+                getOrCreateTable(locale).AddMessage(key, value);
                 entries++;
             }
         }
@@ -258,7 +255,7 @@ public static class L10n
     {
         if (string.IsNullOrWhiteSpace(locale))
         {
-            locale = FallbackLocale;
+            locale = FALLBACK_LOCALE;
         }
 
         if (locale == Locale && locale == TranslationServer.GetLocale())
@@ -268,14 +265,13 @@ public static class L10n
 
         Locale = locale;
         TranslationServer.SetLocale(locale);
-        ApplyFonts(locale);
+        applyFonts(locale);
 
         // Logging one resolved key is the cheapest proof that the table actually reached
         // TranslationServer, which matters most in exported builds.
         string probe = TranslationServer.Translate("PLAY");
 
         Logger.Log($"L10N: locale set to {locale} (probe \"PLAY\" -> \"{probe}\")");
-        LocaleChanged?.Invoke(locale);
     }
 
     /// <summary>Resolves a user facing language preference to a concrete locale code.</summary>
@@ -283,7 +279,7 @@ public static class L10n
     {
         return preference switch
         {
-            "English" => EnglishLocale,
+            "English" => ENGLISH_LOCALE,
             "简体中文" => "zh_CN",
             _ => DetectSystemLocale(),
         };
@@ -301,14 +297,14 @@ public static class L10n
             return "zh_CN";
         }
 
-        return FallbackLocale;
+        return FALLBACK_LOCALE;
     }
 
     /// <summary>
     /// Latin-only UI fonts have no CJK glyphs, so a CJK font is registered both as a global
     /// fallback and as a per-font fallback for the fonts the UI actually uses.
     /// </summary>
-    private static void ApplyFonts(string locale)
+    private static void applyFonts(string locale)
     {
         bool needsCjk = locale.StartsWith("zh", StringComparison.OrdinalIgnoreCase);
 
@@ -317,7 +313,7 @@ public static class L10n
             return;
         }
 
-        cjkFallbackFont ??= BuildCjkFont();
+        cjkFallbackFont ??= buildCjkFont();
 
         if (cjkFallbackFont == null)
         {
@@ -325,7 +321,7 @@ public static class L10n
             return;
         }
 
-        foreach (string path in UiFontPaths)
+        foreach (string path in ui_font_paths)
         {
             if (!ResourceLoader.Exists(path))
             {
@@ -370,7 +366,7 @@ public static class L10n
         }
     }
 
-    private static Font BuildCjkFont()
+    private static Font buildCjkFont()
     {
         var font = new SystemFont
         {
@@ -392,7 +388,7 @@ public static class L10n
         return font;
     }
 
-    private static Translation GetOrCreateTable(string locale)
+    private static Translation getOrCreateTable(string locale)
     {
         if (tables.TryGetValue(locale, out Translation table))
         {
@@ -409,7 +405,7 @@ public static class L10n
     /// Minimal RFC-4180 style CSV reader: supports quoted fields, embedded commas, embedded
     /// newlines and doubled quotes. A UTF-8 BOM is stripped from the first cell.
     /// </summary>
-    private static List<List<string>> ParseCsv(string content)
+    private static List<List<string>> parseCsv(string content)
     {
         var rows = new List<List<string>>();
         var row = new List<string>();

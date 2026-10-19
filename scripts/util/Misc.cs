@@ -216,7 +216,7 @@ public class Misc
     /// It is only shown while the Chinese translation is active, since it credits that
     /// translation specifically.
     /// </summary>
-    public static Label AddTranslatorCredit(Control parent)
+    public static void AddTranslatorCredit(Control parent)
     {
         var credit = new Label
         {
@@ -235,7 +235,5 @@ public class Misc
         credit.OffsetBottom = -14;
 
         parent.AddChild(credit);
-
-        return credit;
     }
 }

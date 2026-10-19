@@ -7,12 +7,8 @@ using Godot;
 /// </summary>
 public partial class LocalizationManager : Node
 {
-    public static LocalizationManager Instance { get; private set; }
-
     public override void _Ready()
     {
-        Instance = this;
-
         L10n.Load();
 
         Apply();
@@ -24,11 +20,11 @@ public partial class LocalizationManager : Node
     /// </summary>
     public static void Apply()
     {
-        L10n.SetLocale(L10n.ResolvePreference(GetSavedPreference()));
+        L10n.SetLocale(L10n.ResolvePreference(getSavedPreference()));
     }
 
     /// <summary>The raw language preference stored in the active profile.</summary>
-    public static string GetSavedPreference()
+    private static string getSavedPreference()
     {
         try
         {

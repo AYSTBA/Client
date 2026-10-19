@@ -210,7 +210,7 @@ public partial class ToastNotification : Node
         foreach (char c in text)
         {
             if (
-                (c >= 0x3000 && c <= 0x303F)   // CJK punctuation
+                (c >= 0x3000 && c <= 0x303F) // CJK punctuation
                 || (c >= 0x3400 && c <= 0x4DBF) // CJK extension A
                 || (c >= 0x4E00 && c <= 0x9FFF) // CJK unified ideographs
                 || (c >= 0xF900 && c <= 0xFAFF) // CJK compatibility ideographs

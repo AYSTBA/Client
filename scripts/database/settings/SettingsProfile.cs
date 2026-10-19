@@ -674,7 +674,7 @@ public partial class SettingsProfile
             },
         };
 
-        GamepadCursorSpeed = new(PlayerInputController.DefaultGamepadCursorSpeed)
+        GamepadCursorSpeed = new(PlayerInputController.DEFAULT_GAMEPAD_CURSOR_SPEED)
         {
             Id = "GamepadCursorSpeed",
             Title = "Gamepad Cursor Speed",
@@ -688,7 +688,7 @@ public partial class SettingsProfile
             },
         };
 
-        GamepadDeadzone = new(PlayerInputController.DefaultGamepadDeadzone)
+        GamepadDeadzone = new(PlayerInputController.DEFAULT_GAMEPAD_DEADZONE)
         {
             Id = "GamepadDeadzone",
             Title = "Gamepad Deadzone",

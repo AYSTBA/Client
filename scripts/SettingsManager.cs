@@ -67,10 +67,7 @@ public partial class SettingsManager : Node
         if (!Directory.Exists($"{Constants.USER_FOLDER}/skins/{Instance.Settings.Skin.Value}"))
         {
             Instance.Settings.Skin.Value = new("default");
-            ToastNotification.Notify(
-                L10n.Tr("Could not find skin {0}", Instance.Settings.Skin.Value),
-                1
-            );
+            ToastNotification.Notify(L10n.Tr("Could not find skin {0}", Instance.Settings.Skin.Value), 1);
         }
 
         static void addUserContentToSettingsList(SettingsItem<string> settingsItem, IEnumerable<string> options)

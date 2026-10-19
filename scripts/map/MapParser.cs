@@ -747,10 +747,7 @@ public partial class MapParser : Node
         }
         catch (Exception exception)
         {
-            _ = ToastNotification.Notify(
-                L10n.Tr("{0} is not the proper format!", Path.GetFileNameWithoutExtension(path)),
-                2
-            );
+            _ = ToastNotification.Notify(L10n.Tr("{0} is not the proper format!", Path.GetFileNameWithoutExtension(path)), 2);
             Logger.Error(exception);
             throw;
         }
