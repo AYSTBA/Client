@@ -88,7 +88,11 @@ public partial class ReplayManager : Node
 
         void storeSizedString(string data)
         {
-            file.Store32((uint)data.Length);
+            // StoreString() writes UTF-8, and the reader consumes that many *bytes*, so the
+            // prefix has to be a byte count. Using data.Length (a UTF-16 code unit count)
+            // truncated any map name with non-ASCII characters, e.g. "晨光 Morning Light"
+            // came back as "晨光 Morning L".
+            file.Store32((uint)System.Text.Encoding.UTF8.GetByteCount(data));
             file.StoreString(data);
         }
 

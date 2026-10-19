@@ -10,6 +10,18 @@ public partial class SettingsProfile
     #region Gameplay
 
     /// <summary>
+    /// How fast the cursor travels when driven by a gamepad stick
+    /// </summary>
+    [Order]
+    public SettingsItem<double> GamepadCursorSpeed { get; private set; }
+
+    /// <summary>
+    /// Stick displacement that is ignored before the cursor starts moving
+    /// </summary>
+    [Order]
+    public SettingsItem<double> GamepadDeadzone { get; private set; }
+
+    /// <summary>
     /// Adjusts cursor sensitivity
     /// </summary>
     [Order]
@@ -92,18 +104,6 @@ public partial class SettingsProfile
     /// </summary>
     [Order]
     public SettingsItem<double> FoV { get; private set; }
-
-    /// <summary>
-    /// How fast the cursor travels when driven by a gamepad stick
-    /// </summary>
-    [Order]
-    public SettingsItem<double> GamepadCursorSpeed { get; private set; }
-
-    /// <summary>
-    /// Stick displacement that is ignored before the cursor starts moving
-    /// </summary>
-    [Order]
-    public SettingsItem<double> GamepadDeadzone { get; private set; }
 
     #endregion
 
