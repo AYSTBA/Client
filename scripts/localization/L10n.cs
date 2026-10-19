@@ -49,6 +49,9 @@ public static class L10n
     /// <summary>True once the translation table has been read and registered.</summary>
     public static bool Loaded => tables.Count > 0;
 
+    /// <summary>True when the active locale is Chinese, used to gate the translator credit.</summary>
+    public static bool IsChinese => Locale.StartsWith("zh", StringComparison.OrdinalIgnoreCase);
+
     /// <summary>Raised after <see cref="SetLocale"/> changed the active locale.</summary>
     public static event Action<string> LocaleChanged;
 

@@ -210,4 +210,32 @@ public class Misc
 
         return left - 1;
     }
+
+    /// <summary>
+    /// Adds the "AYSTBA 汉化" credit to the bottom-right of <paramref name="parent"/>.
+    /// It is only shown while the Chinese translation is active, since it credits that
+    /// translation specifically.
+    /// </summary>
+    public static Label AddTranslatorCredit(Control parent)
+    {
+        var credit = new Label
+        {
+            Text = "AYSTBA 汉化",
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Center,
+            MouseFilter = Control.MouseFilterEnum.Ignore,
+            Modulate = Color.Color8(255, 255, 255, 150),
+            Visible = L10n.IsChinese,
+        };
+
+        credit.SetAnchorsPreset(Control.LayoutPreset.BottomRight);
+        credit.OffsetLeft = -260;
+        credit.OffsetTop = -40;
+        credit.OffsetRight = -18;
+        credit.OffsetBottom = -14;
+
+        parent.AddChild(credit);
+
+        return credit;
+    }
 }

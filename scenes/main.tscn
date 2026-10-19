@@ -190,11 +190,11 @@ color = Color(0.050980393, 0.050980393, 0.050980393, 1)
 [node name="Categories" type="Panel" parent="Settings/Holder" unique_id=1823496670]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.2
+anchor_left = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 8.00001
-offset_top = 48.0
+offset_top = 86.0
 offset_right = -8.0
 offset_bottom = -8.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_l24nh")
@@ -330,20 +330,21 @@ text = "Button"
 [node name="Sidebar" type="ScrollContainer" parent="Settings/Holder" unique_id=1655790017]
 layout_mode = 1
 anchors_preset = -1
-anchor_right = 0.2
-anchor_bottom = 1.0
+anchor_right = 1.0
+anchor_bottom = 0.0
 offset_top = 40.0
+offset_bottom = 78.0
 
-[node name="Container" type="VBoxContainer" parent="Settings/Holder/Sidebar" unique_id=1758929223]
+[node name="Container" type="HBoxContainer" parent="Settings/Holder/Sidebar" unique_id=1758929223]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource("3_tipki")
-theme_override_constants/separation = 0
+theme_override_constants/separation = 4
 
 [node name="SidebarCategoryTemplate" type="ColorRect" parent="Settings/Holder/Sidebar/Container" unique_id=1607495318]
 visible = false
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(132, 38)
 layout_mode = 2
 color = Color(1, 1, 1, 0)
 
@@ -351,12 +352,12 @@ color = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
-offset_bottom = 50.0
+offset_bottom = 38.0
 focus_mode = 0
 mouse_default_cursor_shape = 2
 theme = SubResource("Theme_jhjkh")
 text = "CATEGORY"
-alignment = 0
+alignment = 1
 
 [node name="Header" type="Panel" parent="Settings/Holder" unique_id=418766057]
 layout_mode = 1

@@ -7,6 +7,16 @@ using Godot;
 
 public partial class SettingsProfile
 {
+    #region Language
+
+    /// <summary>
+    /// Dedicated language page, one button per language the client ships with
+    /// </summary>
+    [Order]
+    public SettingsItem<Variant> LanguageSelection { get; private set; }
+
+    #endregion
+
     #region Gameplay
 
     /// <summary>
@@ -464,6 +474,34 @@ public partial class SettingsProfile
 
     public SettingsProfile()
     {
+        #region Language
+
+        LanguageSelection = new(default)
+        {
+            Id = "LanguageSelection",
+            Title = "Interface Language",
+            Description = "Choose the language used by the interface. The game restarts to apply the change.",
+            Section = SettingsSection.Language,
+            Buttons =
+            [
+                new()
+                {
+                    Title = "English",
+                    Description = "Use the original English interface",
+                    OnPressed = () => selectLanguage("English"),
+                },
+                new()
+                {
+                    Title = "简体中文",
+                    Description = "使用简体中文界面（AYSTBA 汉化）",
+                    OnPressed = () => selectLanguage("简体中文"),
+                },
+            ],
+            SaveToDisk = false,
+        };
+
+        #endregion
+
         #region Gameplay
 
         Sensitivity = new(0.5f)
@@ -641,7 +679,7 @@ public partial class SettingsProfile
             Id = "GamepadCursorSpeed",
             Title = "Gamepad Cursor Speed",
             Description = "How fast the cursor moves when a gamepad stick is pushed, in pixels per second",
-            Section = SettingsSection.Gameplay,
+            Section = SettingsSection.Input,
             Slider = new()
             {
                 Step = 10,
@@ -655,7 +693,7 @@ public partial class SettingsProfile
             Id = "GamepadDeadzone",
             Title = "Gamepad Deadzone",
             Description = "How far a gamepad stick must be pushed before the cursor starts moving",
-            Section = SettingsSection.Gameplay,
+            Section = SettingsSection.Input,
             Slider = new()
             {
                 Step = 0.01f,
@@ -1315,19 +1353,13 @@ public partial class SettingsProfile
 
         #region Other
 
+        // Stored value only; the player picks a language on the dedicated Language page.
         Language = new("System")
         {
             Id = "Language",
             Title = "Language",
             Description = "Language used by the interface, \"System\" follows your operating system",
-            Section = SettingsSection.Other,
-            UpdateAction = (_, init) =>
-            {
-                if (!init)
-                {
-                    SettingsManager.ShowRestartRequiredPopup();
-                }
-            },
+            Section = SettingsSection.None,
             List = new("System") { Values = ["System", "English", "简体中文"] },
         };
 
@@ -1565,6 +1597,18 @@ public partial class SettingsProfile
         }
 
         return dictionary;
+    }
+
+    /// <summary>
+    /// Stores the chosen language and asks for a restart, because part of the interface has
+    /// already been built by the time the locale changes.
+    /// </summary>
+    private static void selectLanguage(string preference)
+    {
+        SettingsManager.Instance.Settings.Language.Value = preference;
+        SettingsManager.Save();
+
+        SettingsManager.ShowRestartRequiredPopup();
     }
 
     private void updateApproachTime()

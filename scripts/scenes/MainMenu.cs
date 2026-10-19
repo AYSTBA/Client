@@ -54,6 +54,8 @@ public partial class MainMenu : BaseScene
                 button.Pressed += () => Transition(menu);
             }
         }
+
+        Util.Misc.AddTranslatorCredit(menuHolder);
     }
 
     public override void _Input(InputEvent @event)

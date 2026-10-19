@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -16,7 +16,7 @@ public partial class SettingsMenu : ColorRect
     private Panel holder;
     private Panel header;
     private OptionButton profilesButton;
-    private VBoxContainer sidebar;
+    private HBoxContainer sidebar;
     private Panel categories;
 
     private ColorRect sidebarCategoryTemplate;
@@ -38,7 +38,7 @@ public partial class SettingsMenu : ColorRect
         holder = GetNode<Panel>("Holder");
         header = holder.GetNode<Panel>("Header");
         profilesButton = header.GetNode<OptionButton>("Profiles");
-        sidebar = holder.GetNode("Sidebar").GetNode<VBoxContainer>("Container");
+        sidebar = holder.GetNode("Sidebar").GetNode<HBoxContainer>("Container");
         categories = holder.GetNode<Panel>("Categories");
 
         sidebarCategoryTemplate = sidebar.GetNode<ColorRect>("SidebarCategoryTemplate");
@@ -209,6 +209,8 @@ public partial class SettingsMenu : ColorRect
         }
 
         Logger.Log($"SETTINGS MENU: {(Time.GetTicksUsec() - start) / 1000}ms");
+
+        Util.Misc.AddTranslatorCredit(holder);
 
         HideMenu();
 
