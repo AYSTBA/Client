@@ -22,6 +22,7 @@
 ## Table of Contents
 
 - [About](#about)
+- [Chinese Localization](#chinese-localization)
 - [Downloading the Game](#downloading-the-game)
   - [Rewrite (Current)](#rewrite-current-maintained-client)
   - [Nightly (Legacy)](#nightly-legacy)
@@ -41,6 +42,83 @@
 ## About
 
 **Rhythia** (formerly *Sound Space Plus*) is a free and open-source rhythm game built with **Godot 4.7** and **C#**.
+
+---
+
+## Chinese Localization
+
+> 本仓库是 Rhythia 的**简体中文汉化版本**，汉化：**AYSTBA**。
+> This repository is a Simplified Chinese build of Rhythia. Translation by **AYSTBA**.
+
+### 切换语言 / Switching language
+
+设置 → **语言**（分类栏第一项）→ 选择 `English` 或 `简体中文`。
+
+切换后需要**重启游戏**才会生效，因为部分界面在改语言时已经构建完成。游戏会弹出重启提示。
+
+原版游戏本身不带任何多语言支持，界面只有英文一种，因此语言列表为 `English`（原版界面）与 `简体中文` 两项。
+
+> [!NOTE]
+> The original client ships no localization at all — every UI string was hardcoded English — so `English` and `简体中文` are the only two entries in the language list.
+
+### 汉化署名 / Credit
+
+中文模式下，**主菜单**与**设置界面**的右下角会显示 `AYSTBA 汉化`。切换到 English 时该署名自动隐藏，因为它署的是这份中文翻译。
+
+### 词条维护 / Editing the translation
+
+所有译文集中在 [`translations/strings.csv`](translations/strings.csv)，用表格软件或文本编辑器直接编辑即可。设计上有两个要点：
+
+- **英文原文就是 key**。Godot 4 的 Control 节点默认开启 auto-translate，会拿节点上的原文去查表，因此场景里几百处文案无需改动即可翻译。
+- 代码里动态生成的文案（提示条、弹窗、设置项）走 `L10n.Tr(...)`，其中 toast 与弹窗是在各自唯一出口处统一翻译的。
+
+改完 CSV 后需要让 Godot 重新导入一次，它才会重新生成 `.translation` 资源：
+
+```bash
+godot --headless --path . --import
+```
+
+### 中文字体 / CJK font
+
+界面字体（Comfortaa / Montserrat / Nunito / Roboto / Ubuntu）都只含拉丁字形。中文模式启动时会把系统中文字体（微软雅黑 / Noto Sans CJK / 思源黑体等）注册为回退字体，缺字时自动使用，不必额外打包字体文件。
+
+### 手柄支持 / Gamepad support
+
+原版 `PlayerInputController` 只处理鼠标与键盘事件，手柄完全没有输入通路。本版本补上了：
+
+| 输入 | 作用 |
+|---|---|
+| 左/右摇杆（取推动较大的一侧） | 移动光标 |
+| 十字键 | 移动光标（精确微调） |
+| **A** | 空格（暂停 / 跳过） |
+| **Start** | 暂停 |
+| **X** | 切换音符回推 |
+| **Y** | 切换音符淡出 |
+| **Back** | 切换正交视角 |
+
+摇杆位移会被换算成与鼠标相同的相对像素增量，所以所有摄像机模式无需修改即可工作。手感可在 **设置 → 输入与输出** 里调整：
+
+- **手柄光标速度**（默认 700 像素/秒，100–3000）
+- **手柄摇杆死区**（默认 0.15，0–0.5）
+
+> [!NOTE]
+> 手柄目前只在**对局内**控制光标，菜单导航仍需鼠标（原版按钮为不可聚焦状态）。
+
+### 修复 / Fixes
+
+- **中文谱面名的回放无法观看**：回放文件里字符串的长度前缀写的是字符数，而读取端按 UTF-8 字节数消费，导致 `晨光 Morning Light` 被截断成 `晨光 Morning L`、找不到谱面目录。已改为写入字节数（ASCII 名字行为不变）。
+- **没有谱面时点「随机」报错**：`Random.Next(0)` 返回 0 而不抛异常，随后 `Maps[0]` 越界。已加空列表判断。
+- **空谱面列表没有任何提示**：首次启动且未导入谱面时，列表空白容易误以为是菜单坏了。现在会提示去「导入」。
+
+### 导出注意事项 / Exporting
+
+- 必须使用 **Godot 4.7.2 (.NET)** 与 **.NET SDK 10**；非 .NET 版编辑器会改写 `project.godot` 的构建标记并破坏 `.godot` 缓存。
+- 导出的 `.pck` **不包含** `translations/strings.csv`（带 `.import` 的文件只导出导入产物），运行时会改为读取 `.translation` 资源。因此改完译文后、导出之前务必先执行一次上面的 `--import`，否则导出包里会是没有新改动的旧译文。
+- 命令行导出示例：
+
+  ```bash
+  godot --headless --path . --export-release "Windows Desktop" "../Rhythia-Windows/Rhythia.exe"
+  ```
 
 ---
 
