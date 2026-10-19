@@ -20,6 +20,8 @@ public static class L10n
     public const string EnglishLocale = "en";
     public const string FallbackLocale = "en";
     public const string TablePath = "res://translations/strings.csv";
+    public const string TableDirectory = "res://translations";
+    public const string TableBaseName = "strings";
 
     /// <summary>Locales that ship with a translation table.</summary>
     public static readonly string[] TranslatedLocales = ["zh_CN"];
@@ -91,7 +93,15 @@ public static class L10n
         }
     }
 
-    /// <summary>Reads the CSV table and registers every locale it contains.</summary>
+    /// <summary>
+    /// Loads the translation tables and registers them with <see cref="TranslationServer"/>.
+    /// <para>
+    /// Godot's CSV importer writes <c>strings.&lt;locale&gt;.translation</c> next to the table.
+    /// Those are resources, so they travel inside an exported .pck, while the raw .csv only
+    /// does when the export filter lists it. Preferring the resources keeps exports localized
+    /// and the CSV keeps source runs working before the editor has imported anything.
+    /// </para>
+    /// </summary>
     public static void Load()
     {
         foreach (Translation existing in tables.Values)
@@ -101,10 +111,82 @@ public static class L10n
 
         tables.Clear();
 
+        // The CSV is the authored source of truth, so it wins when present. Exported builds
+        // cannot read it: a .csv has an importer, so only the imported .translation resource
+        // is packed. That resource is the fallback here.
+        int entries = loadCsv();
+        string source = "csv";
+
+        if (tables.Count == 0)
+        {
+            entries = loadImportedTranslations();
+            source = "imported .translation";
+        }
+
+        foreach (Translation table in tables.Values)
+        {
+            TranslationServer.AddTranslation(table);
+        }
+
+        string loaded = entries >= 0 ? $"{entries} entries" : "table";
+
+        Logger.Log(
+            $"L10N: loaded {loaded} from {source} for [{string.Join(", ", tables.Keys)}]"
+        );
+
+        if (tables.Count == 0)
+        {
+            GD.PushWarning("L10N: no translation could be loaded, UI will fall back to English");
+        }
+    }
+
+    /// <summary>Loads the .translation resources produced by Godot's CSV importer.</summary>
+    private static int loadImportedTranslations()
+    {
+        int entries = 0;
+
+        foreach (string locale in TranslatedLocales)
+        {
+            string path = $"{TableDirectory}/{TableBaseName}.{locale}.translation";
+
+            if (!ResourceLoader.Exists(path))
+            {
+                continue;
+            }
+
+            var translation = ResourceLoader.Load<Translation>(path);
+
+            if (translation == null)
+            {
+                continue;
+            }
+
+            translation.Locale = locale;
+            tables[locale] = translation;
+
+            // Exported builds ship an OptimizedTranslation, which deliberately drops the
+            // source strings and therefore cannot report a message count.
+            if (translation is OptimizedTranslation)
+            {
+                entries = -1;
+            }
+            else if (entries >= 0)
+            {
+                entries += translation.GetMessageCount();
+            }
+        }
+
+        return entries;
+    }
+
+    /// <summary>Parses the authored CSV, used when no imported translation is available.</summary>
+    private static int loadCsv()
+    {
         if (!FileAccess.FileExists(TablePath))
         {
-            GD.PushWarning($"L10n: translation table not found at {TablePath}");
-            return;
+            // Expected in exported builds, where only the imported resource is packed.
+            Logger.Log($"L10N: no CSV at {TablePath}, falling back to imported translations");
+            return 0;
         }
 
         using FileAccess file = FileAccess.Open(TablePath, FileAccess.ModeFlags.Read);
@@ -112,7 +194,7 @@ public static class L10n
         if (file == null)
         {
             GD.PushError($"L10n: could not open {TablePath} ({FileAccess.GetOpenError()})");
-            return;
+            return 0;
         }
 
         List<List<string>> rows = ParseCsv(file.GetAsText());
@@ -120,7 +202,7 @@ public static class L10n
         if (rows.Count < 2)
         {
             GD.PushWarning("L10n: translation table is empty");
-            return;
+            return 0;
         }
 
         List<string> header = rows[0];
@@ -128,7 +210,7 @@ public static class L10n
         if (header.Count < 2)
         {
             GD.PushWarning("L10n: translation table needs at least a key and one locale column");
-            return;
+            return 0;
         }
 
         int entries = 0;
@@ -165,12 +247,7 @@ public static class L10n
             }
         }
 
-        foreach (Translation table in tables.Values)
-        {
-            TranslationServer.AddTranslation(table);
-        }
-
-        Logger.Log($"L10N: loaded {entries} entries for [{string.Join(", ", tables.Keys)}]");
+        return entries;
     }
 
     /// <summary>Switches the active locale and applies the matching font setup.</summary>
@@ -190,7 +267,11 @@ public static class L10n
         TranslationServer.SetLocale(locale);
         ApplyFonts(locale);
 
-        Logger.Log($"L10N: locale set to {locale}");
+        // Logging one resolved key is the cheapest proof that the table actually reached
+        // TranslationServer, which matters most in exported builds.
+        string probe = TranslationServer.Translate("PLAY");
+
+        Logger.Log($"L10N: locale set to {locale} (probe \"PLAY\" -> \"{probe}\")");
         LocaleChanged?.Invoke(locale);
     }
 
