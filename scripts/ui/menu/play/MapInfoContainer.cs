@@ -119,9 +119,12 @@ public partial class MapInfoContainer : Panel, ISkinnable
 
     public override void _Ready()
     {
-        mainLabelFormat = mainLabel.Text;
-        extraLabelFormat = extraLabel.Text;
-        artistLinkFormat = artistLink.Text;
+        // These are BBCode templates captured from the scene, so auto-translation cannot see
+        // the "{0}" placeholders. Translate them here, where they become format strings.
+        mainLabelFormat = L10n.Tr(mainLabel.Text);
+        extraLabelFormat = L10n.Tr(extraLabel.Text);
+        artistLinkFormat = L10n.Tr(artistLink.Text);
+
         outlineMaterial = info.GetNode<Panel>("Outline").Material as ShaderMaterial;
 
         exportButton.Pressed += () =>
@@ -440,7 +443,7 @@ public partial class MapInfoContainer : Panel, ISkinnable
             mainLabelFormat,
             Util.String.SanitizeBBCode(map.PrettyTitle),
             difficultyColor.ToHtml(),
-            Util.String.SanitizeBBCode(map.DifficultyName),
+            Util.String.SanitizeBBCode(L10n.Tr(map.DifficultyName)),
             Util.String.SanitizeBBCode(map.PrettyMappers)
         );
 

@@ -32,7 +32,7 @@ public partial class Results : BaseScene
         var attempt = Game.Attempt;
 
         holder.GetNode<Label>("Title").Text = (attempt.IsReplay ? "[REPLAY] " : "") + attempt.Map.PrettyTitle;
-        holder.GetNode<Label>("Difficulty").Text = attempt.Map.DifficultyName;
+        holder.GetNode<Label>("Difficulty").Text = L10n.Tr(attempt.Map.DifficultyName);
         holder.GetNode<Label>("Mappers").Text = L10n.Tr("by {0}", attempt.Map.PrettyMappers);
         holder.GetNode<Label>("Accuracy").Text = $"{attempt.Accuracy:F2}%";
         holder.GetNode<Label>("Score").Text = $"{Util.String.PadMagnitude(attempt.Score)}";

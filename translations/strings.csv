@@ -88,6 +88,24 @@
 "FAILED","FAILED","失败"
 "Watch Replay","Watch Replay","观看回放"
 "by {0}","by {0}","谱师：{0}"
+"N/A","N/A","无"
+"Easy","Easy","简单"
+"Medium","Medium","中等"
+"Hard","Hard","困难"
+"Insane","Insane","疯狂"
+"Illogical","Illogical","超乎常理"
+"[outline_size=2][font_size=24]{0}
+[color={1}]{2} [font_size=16][color=909096]by {3}","[outline_size=2][font_size=24]{0}
+[color={1}]{2} [font_size=16][color=909096]by {3}","[outline_size=2][font_size=24]{0}
+[color={1}]{2} [font_size=16][color=909096]谱师 {3}"
+"[color=ffffff88]{0}
+{1} notes
+[color=ffffff44]{2}","[color=ffffff88]{0}
+{1} notes
+[color=ffffff44]{2}","[color=ffffff88]{0}
+{1} 个音符
+[color=ffffff44]{2}"
+"[outline_size=2][outline_color=000000][color=808080]{0} — [color={1}]{2} [color=808080]by [color=b0b0b0]{3}","[outline_size=2][outline_color=000000][color=808080]{0} — [color={1}]{2} [color=808080]by [color=b0b0b0]{3}","[outline_size=2][outline_color=000000][color=808080]{0} — [color={1}]{2} [color=808080]谱师 [color=b0b0b0]{3}"
 "Initializing maps","Initializing maps","正在初始化谱面"
 "Initializing maps ({0}/{1})","Initializing maps ({0}/{1})","正在初始化谱面（{0}/{1}）"
 "Downloading {0} %","Downloading {0} %","正在下载 {0} %"

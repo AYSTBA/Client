@@ -267,11 +267,12 @@ public static class L10n
         TranslationServer.SetLocale(locale);
         applyFonts(locale);
 
-        // Logging one resolved key is the cheapest proof that the table actually reached
-        // TranslationServer, which matters most in exported builds.
-        string probe = TranslationServer.Translate("PLAY");
+        // Logging a couple of resolved keys is the cheapest proof that the table actually
+        // reached TranslationServer, which matters most in exported builds.
+        string probeMenu = TranslationServer.Translate("PLAY");
+        string probeDifficulty = TranslationServer.Translate("Illogical");
 
-        Logger.Log($"L10N: locale set to {locale} (probe \"PLAY\" -> \"{probe}\")");
+        Logger.Log($"L10N: locale set to {locale} (\"PLAY\" -> \"{probeMenu}\", \"Illogical\" -> \"{probeDifficulty}\")");
     }
 
     /// <summary>Resolves a user facing language preference to a concrete locale code.</summary>

@@ -78,6 +78,12 @@
 godot --headless --path . --import
 ```
 
+### 谱面数据 / Map data
+
+谱面列表与详情里，**内置难度名**（`N/A` / `Easy` / `Medium` / `Hard` / `Insane` / `Illogical`）以及卡片上的 `by`、`{1} notes` 这类标签都会跟随语言切换。这些文本在谱面数据里是原始值，只在**显示处**翻译，写进 `metadata.json` 的内容不会被改动。
+
+曲名、艺术家、谱师署名，以及谱面作者自定义的难度名（例如 `Meow`）属于作品署名，保持原文不翻译 —— 它们不在词条表里，`L10n.Tr` 会原样返回。
+
 ### 中文字体 / CJK font
 
 界面字体（Comfortaa / Montserrat / Nunito / Roboto / Ubuntu）都只含拉丁字形。中文模式启动时会把系统中文字体（微软雅黑 / Noto Sans CJK / 思源黑体等）注册为回退字体，缺字时自动使用，不必额外打包字体文件。

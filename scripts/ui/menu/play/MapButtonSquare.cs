@@ -61,7 +61,8 @@ public partial class MapButtonSquare : MapButton
 
         var color = Constants.DIFFICULTY_COLORS[map.Difficulty];
 
-        difficulty.Text = map.DifficultyName;
+        // Built-in difficulty names are English; custom ones fall through unchanged.
+        difficulty.Text = L10n.Tr(map.DifficultyName);
         author.Text = map.PrettyMappers;
         length.Text = Util.String.FormatTime(map.Length / 1000);
         difficulty.LabelSettings.FontColor = color;
