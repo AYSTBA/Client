@@ -232,6 +232,23 @@ You can also access the user folder from within the game via the **User Folder**
 > [!NOTE]
 > You can change the user folder location to your desired path in **Settings** → **Other** → **Set User Folder Path**
 
+### 便携模式 / Portable builds
+
+在 `Rhythia.exe` 同级目录放一个名为 `portable.txt` 的文件（内容随意），游戏就会把全部数据写进同级的 `user/` 目录，不再使用系统用户目录：
+
+```
+D:\Rhythia-Player\
+├── Rhythia.exe
+├── portable.txt
+├── data_Rhythia_windows_x86_64\
+└── user\                 ← 谱面、存档、配置、数据库都在这里
+```
+
+这样做的用途是**把个人游玩版和开发版彻底分开**：从源码运行的开发版仍使用 `%appdata%\Rhythia`，便携版用自己目录下的 `user\`，两边的谱面、配置、成绩与数据库互不影响。想换机器或备份时，直接拷贝整个文件夹即可带走全部数据。
+
+> [!NOTE]
+> 便携模式优先级最高，会忽略「设置 → 其他 → 用户文件夹路径」。另外 Godot 引擎自身的日志（`godot.log`）由项目设置决定，仍会写到 `%appdata%\Rhythia\logs`，不影响游戏数据。
+
 ---
 
 ## Getting Maps

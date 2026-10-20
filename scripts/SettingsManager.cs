@@ -158,6 +158,16 @@ public partial class SettingsManager : Node
 
     public static string GetUserFolder()
     {
+        // A portable copy keeps its data beside the executable, so a player install never
+        // shares maps, profiles and the database with a development checkout.
+        string portable = GetPortableUserFolder();
+
+        if (portable != null)
+        {
+            Directory.CreateDirectory(portable);
+            return portable;
+        }
+
         string[] paths = GetUserFolderPointerContent();
         string currentDir = paths[0];
 
@@ -174,6 +184,24 @@ public partial class SettingsManager : Node
         }
 
         return currentDir;
+    }
+
+    /// <summary>
+    /// Marker that turns the build into a portable one: <c>portable.txt</c> sitting next to
+    /// the executable. Returns the user folder to use, or null to fall back to the OS user
+    /// folder. Editor runs never satisfy this because the marker would have to sit next to
+    /// the editor binary.
+    /// </summary>
+    public static string GetPortableUserFolder()
+    {
+        string executableDir = OS.GetExecutablePath().GetBaseDir();
+
+        if (string.IsNullOrEmpty(executableDir) || !File.Exists($"{executableDir}/portable.txt"))
+        {
+            return null;
+        }
+
+        return $"{executableDir}/user";
     }
 
     public static string GetPreviousUserFolder()
